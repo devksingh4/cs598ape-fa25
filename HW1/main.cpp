@@ -17,7 +17,8 @@ using namespace std;
 
 #include <sys/time.h>
 
-float tdiff(struct timeval *start, struct timeval *end) {
+__attribute__((always_inline))
+inline float tdiff(struct timeval *start, struct timeval *end) {
   return (end->tv_sec-start->tv_sec) + 1e-6*(end->tv_usec-start->tv_usec);
 }
 
@@ -46,10 +47,14 @@ void set(int i, int j, unsigned char r, unsigned char g, unsigned char b){
 }
 
 void refresh(Autonoma* c){
+   auto up = c->camera.up;
+   auto forward = c->camera.forward;
+   auto right = c->camera.right;
+   auto focus = c->camera.focus;
    for(int n = 0; n<H*W; ++n) 
    { 
-      Vector ra = c->camera.forward+((double)(n%W)/W-.5)*((c->camera.right))+(.5-(double)(n/W)/H)*((c->camera.up));
-      calcColor(&DATA[3*n], c, Ray(c->camera.focus, ra), 0);
+      Vector ra = forward+((double)(n%W)/W-.5)*((right))+(.5-(double)(n/W)/H)*((up));
+      calcColor(&DATA[3*n], c, Ray(focus, ra), 0);
    }
 }
 
@@ -73,7 +78,8 @@ void output(char* file){
    pclose(f);
 }
 
-int streq(const char* a, const char* b) {
+__attribute__((always_inline))
+inline int streq(const char* a, const char* b) {
    return strcmp(a, b) == 0;
 }
 
