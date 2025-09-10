@@ -54,7 +54,10 @@ void refresh(Autonoma* c){
    auto forward = c->camera.forward;
    auto right = c->camera.right;
    auto focus = c->camera.focus;
-   for(int n = 0; n<H*W; ++n) 
+
+   int n = 0;
+   #pragma omp parallel for private
+   for(n = 0; n<H*W; ++n) 
    { 
       Vector ra = forward+((double)(n%W)/W-.5)*((right))+(.5-(double)(n/W)/H)*((up));
       calcColor(&DATA[3*n], c, Ray(focus, ra), 0);
