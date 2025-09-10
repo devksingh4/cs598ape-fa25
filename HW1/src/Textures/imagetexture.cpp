@@ -13,16 +13,23 @@ void ImageTexture::getColor(unsigned char* toFill, double* am, double *op, doubl
 
 void ImageTexture::maskImageAlpha(){
 int x,y;
-   for(y = h-1; y>=0; y--)
+#pragma omp parallel for
+   for(y = h-1; y>=0; y--) {
+      auto factor = y*w;
       for(x = 0; x<w; x++){
-         int total = 4*(x+y*w);
+         int total = 4*(x+factor);
+         // OPTIM: prefetch the next loop iterations
+         __builtin_prefetch(&imageData[total + 4]);
+         __builtin_prefetch(&imageData[total + 8]);
+         __builtin_prefetch(&imageData[total + 16]);
          {
             imageData[total+3]=imageData[total];
             imageData[total]=255;
             imageData[total+1]=255;
             imageData[total+2]=255;
          }
-      }          
+      }       
+   }   
 }
 
 
