@@ -34,10 +34,13 @@ unsigned char* getColor(unsigned char a, unsigned char b, unsigned char c){
 int W = 1000, H = 1000;
 
 unsigned char* DATA = (unsigned char*)malloc(W*H*3*sizeof(unsigned char));
-unsigned char get(int i, int j, int k){
+
+__attribute__((always_inline))
+inline unsigned char get(int i, int j, int k){
    return DATA[3*(i+j*W)+k]; 
 }
-unsigned char* getPos(int i, int j){
+__attribute__((always_inline))
+inline unsigned char* getPos(int i, int j){
    return &DATA[3*(i+j*W)]; 
 }
 void set(int i, int j, unsigned char r, unsigned char g, unsigned char b){
@@ -342,16 +345,23 @@ Autonoma* createInputs(const char* inputFile) {
    return MAIN_DATA;
 }
 
-double identity(double x, double from, double to) {
+__attribute__((always_inline))
+inline double identity(double x, double from, double to) {
    return (1 - x) * from + x * to;
 }
-double expfn(double x, double from, double to) {
+
+__attribute__((always_inline))
+inline double expfn(double x, double from, double to) {
    return (to - from) * exp(10 * x) / exp(10) + from;
 }
-double sinfn(double x, double from, double to) {
+
+__attribute__((always_inline))
+inline double sinfn(double x, double from, double to) {
    return (to - from) * sin(x * 6.28) + from;
 }
-double cosfn(double x, double from, double to) {
+
+__attribute__((always_inline))
+inline double cosfn(double x, double from, double to) {
    return (to - from) * cos(x * 6.28) + from;
 }
 
