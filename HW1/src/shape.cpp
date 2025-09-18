@@ -38,13 +38,15 @@ typedef struct {
 
 void insertionSort(TimeAndShape *arr, int n) {
     for (int i = 1; i < n; ++i) {
-        TimeAndShape key = arr[i];
-        int j = i - 1;
-        while (j >= 0 && arr[j].time > key.time) {
-            arr[j + 1] = arr[j];
-            j = j - 1;
-        }
-        arr[j + 1] = key;
+      // OPTIM: use pointer math instead of array math
+      // I'm not sure why this is actually faster
+      TimeAndShape key = arr[i];
+      TimeAndShape *ptr = &arr[i];
+      while (ptr > arr && (ptr-1)->time > key.time) {
+         *ptr = *(ptr-1);
+         ptr--;
+      }
+      *ptr = key;
     }
 }
 
