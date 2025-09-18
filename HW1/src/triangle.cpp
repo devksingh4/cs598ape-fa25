@@ -53,7 +53,6 @@ bool Triangle::getLightIntersection(Ray ray, double* fill){
    const double r = -norm/t;
    if(r<=0. || r>=1.) return false;
    Vector dist = solveScalers(right, up, vect, ray.point+ray.vector*r-center);
-   
    unsigned char tmp = (thirdX - dist.x) * textureY + (thirdX-textureX) * (dist.y - textureY) < 0.0;
    if ((tmp!=(textureX * dist.y < 0.0)) || (tmp != (dist.x * textureY - thirdX * dist.y < 0.0))) return false;
    
@@ -62,8 +61,10 @@ bool Triangle::getLightIntersection(Ray ray, double* fill){
    double amb, op, ref;
    texture->getColor(temp, &amb, &op, &ref,fix(dist.x/textureX-.5), fix(dist.y/textureY-.5));
    if(op>1-1E-6) return true;
-   fill[0]*=temp[0]/255.;
-   fill[1]*=temp[1]/255.;
-   fill[2]*=temp[2]/255.;
+   // OPTIM: divison is slow.
+   const double inverse255 = 1/255.;
+   fill[0]*=temp[0] * inverse255;
+   fill[1]*=temp[1] * inverse255;
+   fill[2]*=temp[2] * inverse255;
    return false;
 }
