@@ -1,5 +1,4 @@
 #include "texture.h"
-#include <cmath>
 
 double interpolate(double a,double b,double x)
 {
@@ -9,6 +8,7 @@ double interpolate(double a,double b,double x)
 
 Texture::Texture(double am, double op, double ref):ambient(am),opacity(op), reflection(ref){}
 
+
 double fix(double a) {
    // OPTIM: wtf was this function even doing
    return a - floor(a);
@@ -17,6 +17,7 @@ double fix(double a) {
 double ground(double e){
    return (e>1.)?1.:e;
 }
+
 const char* findExtension(const char* ola){
    const char* end = ola;
    while(*end!='\0') end++;
