@@ -56,7 +56,7 @@ void refresh(Autonoma* c){
    auto focus = c->camera.focus;
 
    int n = 0;
-   #pragma omp parallel for
+   #pragma omp parallel for schedule(dynamic)
    for(n = 0; n<H*W; ++n) 
    { 
       Vector ra = forward+((double)(n%W)/W-.5)*((right))+(.5-(double)(n/W)/H)*((up));
