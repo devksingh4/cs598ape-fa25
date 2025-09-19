@@ -1,7 +1,7 @@
 FUNC := g++
 copt := -c 
 output :=-o 
-FLAGS := -O3 -lm -g -Werror -fopenmp -ffast-math -ftree-vectorize -march=native
+FLAGS := -O3 -lm -g -Werror -fopenmp -ffast-math -ftree-vectorize -march=native -flto
 OBJ_DIR :=./
 
 CPP_FILES := $(wildcard *.cpp)
