@@ -1,5 +1,6 @@
 #include "triangle.h"
 #include <algorithm>
+#include "constants.h"
 
 Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t)
     : Plane(Vector(0,0,0), t, 0., 0., 0., 0., 0.),
@@ -94,10 +95,8 @@ bool Triangle::getLightIntersection(Ray ray, double* fill){
    double amb, op, ref;
    texture->getColor(temp, &amb, &op, &ref,fix(dist.x/textureX-.5), fix(dist.y/textureY-.5));
    if(op>1-1E-6) return true;
-   // OPTIM: divison is slow.
-   const double inverse255 = 1/255.;
-   fill[0]*=temp[0] * inverse255;
-   fill[1]*=temp[1] * inverse255;
-   fill[2]*=temp[2] * inverse255;
+   fill[0]*=temp[0] * over255;
+   fill[1]*=temp[1] * over255;
+   fill[2]*=temp[2] * over255;
    return false;
 }

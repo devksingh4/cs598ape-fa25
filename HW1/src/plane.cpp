@@ -1,4 +1,5 @@
 #include "plane.h"
+#include "constants.h"
 
 Plane::Plane(const Vector &c, Texture* t, double ya, double pi, double ro, double tx, double ty) : Shape(c, t, ya, pi, ro), vect(c), right(c), up(c){
    textureX = tx; textureY = ty;
@@ -81,7 +82,6 @@ double Plane::getIntersection(Ray ray){
 }
 
 bool Plane::getLightIntersection(Ray ray, double* fill){
-   auto const over255 = 1/255.;
    const double t = ray.vector.dot(vect);
    const double norm = vect.dot(ray.point)+d;
    const double r = -norm/t;
