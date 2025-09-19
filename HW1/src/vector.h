@@ -6,7 +6,7 @@
 #include<limits.h>
 #include<cmath>
 #include<limits>
-#define inf std::numeric_limits<double>::infinity()
+constexpr double inf = std::numeric_limits<double>::infinity();
 
 class Vector{
 public:
