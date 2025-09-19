@@ -14,6 +14,7 @@ double Box::getIntersection(Ray ray){
 
 bool Box::getLightIntersection(Ray ray, double* fill){
    const double t = ray.vector.dot(vect);
+   if (t == 0) return false;
    const double norm = vect.dot(ray.point)+d;
    const double r = -norm/t;
    if(r<=0. || r>=1.) return false;

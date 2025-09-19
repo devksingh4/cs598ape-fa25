@@ -110,11 +110,12 @@ void getLight(double* tColor, Autonoma* aut, Vector point, Vector norm, unsigned
    tColor[0] = tColor[1] = tColor[2] = 0.;
    LightNode *t = aut->lightStart;
    while(t!=NULL){
+      auto data = t->data;
       double lightColor[3];     
-      lightColor[1] = t->data->color[1] * over255;
-      lightColor[0] = t->data->color[0] * over255;
-      lightColor[2] = t->data->color[2] * over255;
-      Vector ra = t->data->center-point;
+      lightColor[1] = data->color[1] * over255;
+      lightColor[0] = data->color[0] * over255;
+      lightColor[2] = data->color[2] * over255;
+      Vector ra = data->center-point;
       ShapeNode* shapeIter = aut->listStart;
       bool hit = false;
       while(!hit && shapeIter!=NULL){
@@ -125,10 +126,10 @@ void getLight(double* tColor, Autonoma* aut, Vector point, Vector norm, unsigned
       if(!hit){
       if(flip && perc<0) perc=-perc;
         if(perc>0){
-      
-         tColor[0]+= perc*(lightColor[0]);
-         tColor[1]+= perc*(lightColor[0]);
-         tColor[2]+= perc*(lightColor[0]);
+         const auto percmul = perc*(lightColor[0]); // OPTIM: do mul once
+         tColor[0]+= percmul;
+         tColor[1]+= percmul;
+         tColor[2]+= percmul;
          if(tColor[0]>1.) tColor[0] = 1.;
          if(tColor[1]>1.) tColor[1] = 1.;
          if(tColor[2]>1.) tColor[2] = 1.;
