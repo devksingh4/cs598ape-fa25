@@ -3,7 +3,7 @@ output := -o
 copt := -c 
 SRC_DIR := ./
 OBJ_DIR := ./
-FLAGS := -O3 -lm -g -Werror -ffast-math -ftree-vectorize -march=native
+FLAGS := -O3 -lm -g -Werror -ftree-vectorize -march=native
 
 CPP_FILES := $(wildcard *.cpp)
 OBJ_FILES := $(addprefix $(OBJ_DIR),$(notdir $(CPP_FILES:.cpp=.obj)))
@@ -17,10 +17,10 @@ texture:
 	cd $(SRC_DIR)Textures && make
 
 $(OBJ_DIR)vector.obj: $(SRC_DIR)vector.cpp $(SRC_DIR)vector.h
-	$(FUNC) $(output)$(OBJ_DIR)vector.obj $(copt) $(SRC_DIR)vector.cpp $(FLAGS)
+	$(FUNC) $(output)$(OBJ_DIR)vector.obj $(copt) $(SRC_DIR)vector.cpp $(FLAGS) -ffast-math
 
 $(OBJ_DIR)mandel.obj: $(SRC_DIR)mandel.cpp $(SRC_DIR)mandel.h $(OBJ_DIR)box.obj
-	$(FUNC) $(output)$(OBJ_DIR)mandel.obj $(copt) $(SRC_DIR)mandel.cpp $(FLAGS)
+	$(FUNC) $(output)$(OBJ_DIR)mandel.obj $(copt) $(SRC_DIR)mandel.cpp $(FLAGS) -ffast-math
 
 $(OBJ_DIR)camera.obj: $(SRC_DIR)camera.cpp $(SRC_DIR)camera.h $(OBJ_DIR)vector.obj
 	$(FUNC) $(output)$(OBJ_DIR)camera.obj $(copt) $(SRC_DIR)camera.cpp $(FLAGS)
