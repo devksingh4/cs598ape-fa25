@@ -37,31 +37,32 @@ typedef struct {
    Shape* shape;
 } TimeAndShape;
 
-void insertionSort(std::vector<TimeAndShape> arr) {
-    for (int i = 1; i < arr.size(); ++i) {
-        TimeAndShape key = arr[i];
-        int j = i - 1;
-        while (j >= 0 && arr[j].time > key.time) {
-            arr[j + 1] = arr[j];
-            j = j - 1;
-        }
-        arr[j + 1] = key;
-    }
+void insertionSort(std::vector<TimeAndShape>& arr) {
+   int n = arr.size();
+   for (int i = 1; i < n; ++i) {
+      TimeAndShape key = arr[i];
+      int j = i - 1;
+      while (j >= 0 && arr[j].time > key.time) {
+         arr[j + 1] = arr[j];
+         j = j - 1;
+      }
+      arr[j + 1] = key;
+   }
 }
 
-void calcColor(unsigned char* toFill,Autonoma* c, Ray ray, unsigned int depth){
+void calcColor(unsigned char* toFill, Autonoma* c, Ray ray, unsigned int depth) {
+   std::vector<TimeAndShape> intersections;
    ShapeNode* t = c->listStart;
-   std::vector<TimeAndShape> intersections; 
-   // OPTIM: use a vector instead of a jankily realloced array
-   while(t != NULL) {
+
+   while (t != NULL) {
       double time = t->data->getIntersection(ray);
       intersections.push_back({time, t->data});
       t = t->next;
    }
 
    insertionSort(intersections);
-   const auto seen = intersections.size();
-   if (seen == 0 || intersections[0].time == inf) {
+
+   if (intersections.empty() || intersections[0].time == inf) {
       double opacity, reflection, ambient;
       Vector temp = ray.vector.normalize();
       const double x = temp.x;
