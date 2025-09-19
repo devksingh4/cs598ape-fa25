@@ -1,7 +1,7 @@
 FUNC := g++
 copt := -c 
 OBJ_DIR := ./bin/
-FLAGS := -O3 -lm -g -Werror -fopenmp -ffast-math -ftree-vectorize -march=native
+FLAGS := -O3 -lm -g -Werror -fopenmp -ffast-math -ftree-vectorize -march=native -flto
 
 CPP_FILES := $(wildcard src/*.cpp)
 OBJ_FILES := $(addprefix $(OBJ_DIR),$(notdir $(CPP_FILES:.cpp=.obj)))
