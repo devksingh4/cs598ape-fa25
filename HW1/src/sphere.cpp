@@ -1,12 +1,47 @@
 #include "sphere.h"
 #include "constants.h"
 
-Sphere::Sphere(const Vector &c, Texture* t, double ya, double pi, double ro, double rad): Shape(c, t, ya, pi, ro){
+Sphere::Sphere(const Vector &c, Texture* t, double ya, double pi, double ro, double rad): 
+    Shape(c, t, ya, pi, ro),
+    min_v(c.x - rad, c.y - rad, c.z - rad),
+    max_v(c.x + rad, c.y + rad, c.z + rad)
+{
   textureX = textureY = 1.;
   normalMap = NULL;
-   radius = rad;
+  radius = rad;
 }
+
+
 bool Sphere::getLightIntersection(Ray ray, double* fill){
+   // Bounding box start
+   const auto overX = 1/ray.vector.x;
+   const auto overY = 1/ray.vector.y;
+   const auto overZ = 1/ray.vector.z;
+   
+   double tmin = (min_v.x - ray.point.x) * overX;
+   double tmax = (max_v.x - ray.point.x) * overX;
+   if (tmin > tmax) std::swap(tmin, tmax);
+
+   double tymin = (min_v.y - ray.point.y) * overY;
+   double tymax = (max_v.y - ray.point.y) * overY;
+   if (tymin > tymax) std::swap(tymin, tymax);
+
+   if ((tmin > tymax) || (tymin > tmax))
+      return false;
+
+   if (tymin > tmin)
+      tmin = tymin;
+   if (tymax < tmax)
+      tmax = tymax;
+
+   double tzmin = (min_v.z - ray.point.z) * overZ;
+   double tzmax = (max_v.z - ray.point.z) * overZ;
+   if (tzmin > tzmax) std::swap(tzmin, tzmax);
+
+   if ((tmin > tzmax) || (tzmin > tmax))
+      return false;
+   // Bounding box end
+
    const double A = ray.vector.mag2();
    const double B = 2*ray.vector.dot(ray.point-center);
    const double C = (ray.point-center).mag2()-radius*radius;
@@ -30,7 +65,37 @@ bool Sphere::getLightIntersection(Ray ray, double* fill){
    fill[2]*=temp[2] * over255;
    return false;
 }
+
 double Sphere::getIntersection(Ray ray){
+   // Bounding box start
+   const auto overX = 1/ray.vector.x;
+   const auto overY = 1/ray.vector.y;
+   const auto overZ = 1/ray.vector.z;
+   
+   double tmin = (min_v.x - ray.point.x) * overX;
+   double tmax = (max_v.x - ray.point.x) * overX;
+   if (tmin > tmax) std::swap(tmin, tmax);
+
+   double tymin = (min_v.y - ray.point.y) * overY;
+   double tymax = (max_v.y - ray.point.y) * overY;
+   if (tymin > tymax) std::swap(tymin, tymax);
+
+   if ((tmin > tymax) || (tymin > tmax))
+      return inf;
+
+   if (tymin > tmin)
+      tmin = tymin;
+   if (tymax < tmax)
+      tmax = tymax;
+
+   double tzmin = (min_v.z - ray.point.z) * overZ;
+   double tzmax = (max_v.z - ray.point.z) * overZ;
+   if (tzmin > tzmax) std::swap(tzmin, tzmax);
+
+   if ((tmin > tzmax) || (tzmin > tmax))
+      return inf;
+   // Bounding box end
+
    const double A = ray.vector.mag2();
    const double B = 2*ray.vector.dot(ray.point-center);
    const double C = (ray.point-center).mag2()-radius*radius;
@@ -43,6 +108,7 @@ double Sphere::getIntersection(Ray ray){
       return (root1>0)?(root1):((root2>0)?root2:inf);
    }
 }
+
 void Sphere::move(){
    return;
 }

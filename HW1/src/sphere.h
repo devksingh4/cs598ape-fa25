@@ -5,6 +5,7 @@
 class Sphere : public Shape{
 public:
   double radius;
+  Vector min_v, max_v; // OPTIM: Bounding box
   Sphere(const Vector &c, Texture* t, double ya, double pi, double ro, double radius);
   double getIntersection(Ray ray);
   void move();
