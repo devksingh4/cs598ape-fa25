@@ -1,12 +1,12 @@
 #include "imagetexture.h"
-
+constexpr double over255 = 1/255.; // in normal folder it's in constants.h but not here
 void ImageTexture::getColor(unsigned char* toFill, double* am, double *op, double *ref, double x, double y){
    int xi = (int)(x*w), yi = (int)(y*h);
    int p1 = 4*(xi+w*yi);
    toFill[0] = imageData[p1];
    toFill[1] = imageData[p1+1];
    toFill[2] = imageData[p1+2];
-   *op = imageData[p1+3]*opacity/255.;
+   *op = imageData[p1+3]*opacity * over255;
    *ref = reflection;
    *am = ambient;
 }
@@ -140,7 +140,7 @@ void ImageTexture::getColor(unsigned char* toFill, double* am, double *op, doubl
    toFill[0] = imageData[start];
    toFill[1] = imageData[start+1];
    toFill[2] = imageData[start+2];
-   *op = imageData[start+3]*opacity/255.;
+   *op = imageData[start+3]*opacity * over255;
    *ref = reflection;
    *am = ambient;
 }

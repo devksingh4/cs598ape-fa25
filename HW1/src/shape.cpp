@@ -62,7 +62,6 @@ void calcColor(unsigned char* toFill,Autonoma* c, Ray ray, unsigned int depth){
          size_t new_capacity = (capacity == 0) ? 16 : capacity * 2;
          TimeAndShape *temp = (TimeAndShape*) realloc(times, sizeof(TimeAndShape) * new_capacity);
          if (temp == NULL) {
-            free(times);
             break;
          }
          times = temp;

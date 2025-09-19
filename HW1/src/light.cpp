@@ -2,6 +2,7 @@
 #include "light.h"
 #include "shape.h"
 #include "camera.h"
+#include "constants.h"
       
 Light::Light(const Vector & cente, unsigned char* colo) : center(cente){
    color = colo;
@@ -110,9 +111,9 @@ void getLight(double* tColor, Autonoma* aut, Vector point, Vector norm, unsigned
    LightNode *t = aut->lightStart;
    while(t!=NULL){
       double lightColor[3];     
-      lightColor[0] = t->data->color[0]/255.;
-      lightColor[1] = t->data->color[1]/255.;
-      lightColor[2] = t->data->color[2]/255.;
+      lightColor[1] = t->data->color[1] * over255;
+      lightColor[0] = t->data->color[0] * over255;
+      lightColor[2] = t->data->color[2] * over255;
       Vector ra = t->data->center-point;
       ShapeNode* shapeIter = aut->listStart;
       bool hit = false;

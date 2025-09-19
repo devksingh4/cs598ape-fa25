@@ -1,4 +1,5 @@
 #include "sphere.h"
+#include "constants.h"
 
 Sphere::Sphere(const Vector &c, Texture* t, double ya, double pi, double ro, double rad): Shape(c, t, ya, pi, ro){
   textureX = textureY = 1.;
@@ -24,9 +25,9 @@ bool Sphere::getLightIntersection(Ray ray, double* fill){
    double amb, op, ref;
    texture->getColor(temp, &amb, &op, &ref,fix((yaw+data2)/M_TWO_PI/textureX),fix((pitch/M_TWO_PI-(data3)))/textureY);
    if(op>1-1E-6) return true;
-   fill[0]*=temp[0]/255.;
-   fill[1]*=temp[1]/255.;
-   fill[2]*=temp[2]/255.;
+   fill[0]*=temp[0] * over255;
+   fill[1]*=temp[1] * over255;
+   fill[2]*=temp[2] * over255;
    return false;
 }
 double Sphere::getIntersection(Ray ray){
