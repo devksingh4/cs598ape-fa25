@@ -81,6 +81,7 @@ double Plane::getIntersection(Ray ray){
 }
 
 bool Plane::getLightIntersection(Ray ray, double* fill){
+   auto const over255 = 1/255.;
    const double t = ray.vector.dot(vect);
    const double norm = vect.dot(ray.point)+d;
    const double r = -norm/t;
@@ -92,9 +93,9 @@ bool Plane::getLightIntersection(Ray ray, double* fill){
    double amb, op, ref;
    texture->getColor(temp, &amb, &op, &ref,fix(dist.x/textureX-.5), fix(dist.y/textureY-.5));
    if(op>1-1E-6) return true;
-   fill[0]*=temp[0]/255.;
-   fill[1]*=temp[1]/255.;
-   fill[2]*=temp[2]/255.;
+   fill[0]*=temp[0]*over255;
+   fill[1]*=temp[1]*over255;
+   fill[2]*=temp[2]*over255;
    return false;
 }
 

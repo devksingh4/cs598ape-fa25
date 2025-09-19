@@ -45,12 +45,15 @@ Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t)
 
 double Triangle::getIntersection(Ray ray){
    // Bounding box start
-   float tmin = (min_v.x - ray.point.x) / ray.vector.x;
-   float tmax = (max_v.x - ray.point.x) / ray.vector.x;
+   const auto overX = 1/ray.vector.x;
+   const auto overY = 1/ray.vector.y;
+   const auto overZ = 1/ray.vector.z;
+   float tmin = (min_v.x - ray.point.x) * overX;
+   float tmax = (max_v.x - ray.point.x) * overX;
    if (tmin > tmax) std::swap(tmin, tmax);
 
-   float tymin = (min_v.y - ray.point.y) / ray.vector.y;
-   float tymax = (max_v.y - ray.point.y) / ray.vector.y;
+   float tymin = (min_v.y - ray.point.y) * overY;
+   float tymax = (max_v.y - ray.point.y) * overY;
    if (tymin > tymax) std::swap(tymin, tymax);
 
    if ((tmin > tymax) || (tymin > tmax))
@@ -61,8 +64,8 @@ double Triangle::getIntersection(Ray ray){
    if (tymax < tmax)
       tmax = tymax;
 
-   float tzmin = (min_v.z - ray.point.z) / ray.vector.z;
-   float tzmax = (max_v.z - ray.point.z) / ray.vector.z;
+   float tzmin = (min_v.z - ray.point.z) * overZ;
+   float tzmax = (max_v.z - ray.point.z) * overZ;
    if (tzmin > tzmax) std::swap(tzmin, tzmax);
 
    if ((tmin > tzmax) || (tzmin > tmax))
