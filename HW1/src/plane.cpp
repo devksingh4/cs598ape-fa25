@@ -76,6 +76,7 @@ void Plane::setRoll(double c){
 
 double Plane::getIntersection(Ray ray){
    const double t = ray.vector.dot(vect);
+   if(t == 0) return inf; // OPTIM: Ray parallel to plane, no intersection
    const double norm = vect.dot(ray.point)+d;
    const double r = -norm/t;
    return (r>0)?r:inf;
@@ -83,6 +84,7 @@ double Plane::getIntersection(Ray ray){
 
 bool Plane::getLightIntersection(Ray ray, double* fill){
    const double t = ray.vector.dot(vect);
+   if(t == 0) return false; // OPTIM: Ray parallel to plane, no intersection
    const double norm = vect.dot(ray.point)+d;
    const double r = -norm/t;
    if(r<=0. || r>=1.) return false;
