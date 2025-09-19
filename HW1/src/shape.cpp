@@ -51,18 +51,19 @@ void insertionSort(std::vector<TimeAndShape>& arr) {
 }
 
 void calcColor(unsigned char* toFill, Autonoma* c, Ray ray, unsigned int depth) {
-   std::vector<TimeAndShape> intersections;
-   ShapeNode* t = c->listStart;
+  std::vector<TimeAndShape> intersections;
+  for (size_t i = 0; i < c->shapes.size(); ++i) {
+    Shape* shape = c->shapes[i];
+    double time = shape->getIntersection(ray);
+    if (time > 0 && time != inf) {
+      TimeAndShape tas;
+      tas.time = time;
+      tas.shape = shape;
+      intersections.push_back(tas);
+    }
+  }
 
-   while (t != NULL) {
-      double time = t->data->getIntersection(ray);
-      if (time > 0 && time != inf) {
-         intersections.push_back({time, t->data});
-      }
-      t = t->next;
-   }
-
-   insertionSort(intersections);
+  insertionSort(intersections);
 
    if (intersections.empty()) {
       double opacity, reflection, ambient;
