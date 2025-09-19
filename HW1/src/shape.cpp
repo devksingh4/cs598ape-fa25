@@ -56,13 +56,15 @@ void calcColor(unsigned char* toFill, Autonoma* c, Ray ray, unsigned int depth) 
 
    while (t != NULL) {
       double time = t->data->getIntersection(ray);
-      intersections.push_back({time, t->data});
+      if (time > 0 && time != inf) {
+         intersections.push_back({time, t->data});
+      }
       t = t->next;
    }
 
    insertionSort(intersections);
 
-   if (intersections.empty() || intersections[0].time == inf) {
+   if (intersections.empty()) {
       double opacity, reflection, ambient;
       Vector temp = ray.vector.normalize();
       const double x = temp.x;
