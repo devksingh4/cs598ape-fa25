@@ -3,6 +3,7 @@ output := -o
 copt := -c 
 SRC_DIR := ./
 OBJ_DIR := ./
+# You can't enable -ffast-math on shape due to use of inf
 FLAGS := -O3 -lm -g -Werror -ftree-vectorize -march=native -flto -fno-math-errno -fno-trapping-math
 
 CPP_FILES := $(wildcard *.cpp)
