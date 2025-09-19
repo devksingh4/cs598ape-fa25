@@ -1,6 +1,11 @@
 #include "triangle.h"
+#include <algorithm>
 
-Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t):Plane(Vector(0,0,0), t, 0., 0., 0., 0., 0.){
+Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t)
+    : Plane(Vector(0,0,0), t, 0., 0., 0., 0., 0.),
+      min_v(std::min({a.x, b.x, c.x}), std::min({a.y, b.y, c.y}), std::min({a.z, b.z, c.z})),
+      max_v(std::max({a.x, b.x, c.x}), std::max({a.y, b.y, c.y}), std::max({a.z, b.z, c.z}))
+{
    center = c;
    Vector righta = (b-c);
    textureX = righta.mag();
@@ -9,7 +14,7 @@ Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t):Plane(Vector(0,0,0)
 
    xsin = -right.z;
    if(xsin<-1.)xsin = -1;
-   else if (xsin>1.)xsin=1.; 
+   else if (xsin>1.)xsin=1.;
    yaw = asin(xsin);
    xcos = sqrt(1.-xsin*xsin);
 
@@ -34,15 +39,40 @@ Triangle::Triangle(Vector c, Vector b, Vector a, Texture* t):Plane(Vector(0,0,0)
    Vector np = solveScalers(right, up, vect, a-c);
    textureY = np.y;
    thirdX = np.x;
-   
+
    d = -vect.dot(center);
 }
 
 double Triangle::getIntersection(Ray ray){
+   // Bounding box start
+   float tmin = (min_v.x - ray.point.x) / ray.vector.x;
+   float tmax = (max_v.x - ray.point.x) / ray.vector.x;
+   if (tmin > tmax) std::swap(tmin, tmax);
+
+   float tymin = (min_v.y - ray.point.y) / ray.vector.y;
+   float tymax = (max_v.y - ray.point.y) / ray.vector.y;
+   if (tymin > tymax) std::swap(tymin, tymax);
+
+   if ((tmin > tymax) || (tymin > tmax))
+      return inf;
+
+   if (tymin > tmin)
+      tmin = tymin;
+   if (tymax < tmax)
+      tmax = tymax;
+
+   float tzmin = (min_v.z - ray.point.z) / ray.vector.z;
+   float tzmax = (max_v.z - ray.point.z) / ray.vector.z;
+   if (tzmin > tzmax) std::swap(tzmin, tzmax);
+
+   if ((tmin > tzmax) || (tzmin > tmax))
+      return inf;
+   // Bounding box end
+
    double time = Plane::getIntersection(ray);
-   if(time==inf) 
+   if(time==inf)
       return time;
-   Vector dist = solveScalers(right, up, vect, ray.point+ray.vector*time-center); 
+   Vector dist = solveScalers(right, up, vect, ray.point+ray.vector*time-center);
    unsigned char tmp = (thirdX - dist.x) * textureY + (thirdX-textureX) * (dist.y - textureY) < 0.0;
    return((tmp!=(textureX * dist.y < 0.0)) || (tmp != (dist.x * textureY - thirdX * dist.y < 0.0)))?inf:time;
 }
@@ -55,8 +85,8 @@ bool Triangle::getLightIntersection(Ray ray, double* fill){
    Vector dist = solveScalers(right, up, vect, ray.point+ray.vector*r-center);
    unsigned char tmp = (thirdX - dist.x) * textureY + (thirdX-textureX) * (dist.y - textureY) < 0.0;
    if ((tmp!=(textureX * dist.y < 0.0)) || (tmp != (dist.x * textureY - thirdX * dist.y < 0.0))) return false;
-   
-   if(texture->opacity>1-1E-6) return true;   
+
+   if(texture->opacity>1-1E-6) return true;
    unsigned char temp[4];
    double amb, op, ref;
    texture->getColor(temp, &amb, &op, &ref,fix(dist.x/textureX-.5), fix(dist.y/textureY-.5));
