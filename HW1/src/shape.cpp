@@ -1,4 +1,5 @@
 #include "shape.h"
+#include <vector>
 
 Shape::Shape(const Vector &c, Texture* t, double ya, double pi, double ro): center(c), texture(t), yaw(ya), pitch(pi), roll(ro){
 };
@@ -36,8 +37,8 @@ typedef struct {
    Shape* shape;
 } TimeAndShape;
 
-void insertionSort(TimeAndShape *arr, int n) {
-    for (int i = 1; i < n; ++i) {
+void insertionSort(std::vector<TimeAndShape> arr) {
+    for (int i = 1; i < arr.size(); ++i) {
         TimeAndShape key = arr[i];
         int j = i - 1;
         while (j >= 0 && arr[j].time > key.time) {
@@ -50,30 +51,17 @@ void insertionSort(TimeAndShape *arr, int n) {
 
 void calcColor(unsigned char* toFill,Autonoma* c, Ray ray, unsigned int depth){
    ShapeNode* t = c->listStart;
-   TimeAndShape *times = NULL;
-   size_t seen = 0;
-   size_t capacity = 0;
-
-   // OPTIM: use realloc instead of whatever the fuck that was.
-   while (t != NULL) {
-      if (seen == capacity) {
-         size_t new_capacity = (capacity == 0) ? 16 : capacity * 2;
-         TimeAndShape *temp = (TimeAndShape*) realloc(times, sizeof(TimeAndShape) * new_capacity);
-         if (temp == NULL) {
-            break;
-         }
-         times = temp;
-         capacity = new_capacity;
-      }
-
+   std::vector<TimeAndShape> intersections; 
+   // OPTIM: use a vector instead of a jankily realloced array
+   while(t != NULL) {
       double time = t->data->getIntersection(ray);
-      times[seen] = (TimeAndShape){ time, t->data };
-      seen++;
+      intersections.push_back({time, t->data});
       t = t->next;
    }
 
-   insertionSort(times, seen);
-   if (seen == 0 || times[0].time == inf) {
+   insertionSort(intersections);
+   const auto seen = intersections.size();
+   if (seen == 0 || intersections[0].time == inf) {
       double opacity, reflection, ambient;
       Vector temp = ray.vector.normalize();
       const double x = temp.x;
@@ -84,9 +72,8 @@ void calcColor(unsigned char* toFill,Autonoma* c, Ray ray, unsigned int depth){
       return;
    }
 
-   double curTime = times[0].time;
-   Shape* curShape = times[0].shape;
-   free(times);
+   double curTime = intersections[0].time;
+   Shape* curShape = intersections[0].shape;
 
    Vector intersect = curTime*ray.vector+ray.point;
    double opacity, reflection, ambient;
