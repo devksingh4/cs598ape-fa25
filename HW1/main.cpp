@@ -50,10 +50,12 @@ void set(int i, int j, unsigned char r, unsigned char g, unsigned char b){
 }
 
 void refresh(Autonoma* c){
-   auto up = c->camera.up;
-   auto forward = c->camera.forward;
-   auto right = c->camera.right;
-   auto focus = c->camera.focus;
+   // OPTIM dereference once
+   auto camera = c->camera;
+   auto up = camera.up;
+   auto forward = camera.forward;
+   auto right = camera.right;
+   auto focus = camera.focus;
 
    int n = 0;
    #pragma omp parallel for schedule(dynamic)
