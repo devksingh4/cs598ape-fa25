@@ -18,7 +18,7 @@ using namespace std;
 #include <sys/time.h>
 
 __attribute__((always_inline))
-inline float tdiff(struct timeval *start, struct timeval *end) {
+constexpr inline float tdiff(struct timeval *start, struct timeval *end) {
   return (end->tv_sec-start->tv_sec) + 1e-6*(end->tv_usec-start->tv_usec);
 }
 
@@ -87,7 +87,7 @@ void output(char* file){
 }
 
 __attribute__((always_inline))
-inline int streq(const char* a, const char* b) {
+constexpr  inline int streq(const char* a, const char* b) {
    return strcmp(a, b) == 0;
 }
 
@@ -351,22 +351,22 @@ Autonoma* createInputs(const char* inputFile) {
 }
 
 __attribute__((always_inline))
-inline double identity(double x, double from, double to) {
+constexpr inline double identity(double x, double from, double to) {
    return (1 - x) * from + x * to;
 }
 
 __attribute__((always_inline))
-inline double expfn(double x, double from, double to) {
+constexpr inline double expfn(double x, double from, double to) {
    return (to - from) * exp(10 * x) / exp(10) + from;
 }
 
 __attribute__((always_inline))
-inline double sinfn(double x, double from, double to) {
+constexpr inline double sinfn(double x, double from, double to) {
    return (to - from) * sin(x * 6.28) + from;
 }
 
 __attribute__((always_inline))
-inline double cosfn(double x, double from, double to) {
+constexpr inline double cosfn(double x, double from, double to) {
    return (to - from) * cos(x * 6.28) + from;
 }
 
