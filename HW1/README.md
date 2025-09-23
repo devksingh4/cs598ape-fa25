@@ -1,6 +1,6 @@
 # 598APE-HW1
 
-# Replicating results
+## Replicating results
 
 This code should run without issues on the course VM.
 
@@ -21,6 +21,7 @@ Ignore parallel rays, reuse pointer dereferences: Commit hash a76944d82245a6609b
 Use vector instead of linked list for Autonoma: Current master branch.
 
 
+## Original README
 
 
 This repository contains code for homework 1 of 598APE.
