@@ -5,12 +5,19 @@
 This code should run without issues on the course VM.
 
 Baseline: Commit hash 5b00e7711fccc0bfdb16bfb5b7d07a662dd88d39
+
 Inlining + realloc fix: Commit hash 7474804a075e68ff0c9f916fdc83a100cd243763
+
 Parallelize pixel refresh: Commit hash 37e7a0a5147c5a3faf19c2c4f1330560afbaf694
+
 Compiler flags: Note: globe run was broken from this commit. So the compiler flags from the last commit was used to get the true impact, applied on top of the code from c94641a550b809c79da4867eda13a024c274429b. We fixed globe in 52ec25d18a4ee75b7afe538033fbe8c6b2cc492c
+
 Implement bounding box for intersections: Commit hash c70a15f45ff492af955557002ef11cbfd1c456b3
+
 Use vector instead of realloc in calcColor, constexpr constant inverses: Commit hash fb1fc21a35ddf6d934cbd6524641bb2cc8d5801a but apply the empty sphere patch
+
 Ignore parallel rays, reuse pointer dereferences: Commit hash a76944d82245a6609b7524aeaedc7139c1d08337
+
 Use vector instead of linked list for Autonoma: Current master branch.
 
 
