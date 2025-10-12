@@ -49,7 +49,15 @@ Ciphertext mul_cipher(Ciphertext c1, Ciphertext c2, double q, double t,
   Poly c0_res = create_poly();
   Poly c1_res = create_poly();
   Poly c2_res = create_poly();
-  for (int i = 0; i < MAX_POLY_DEGREE; i++) {
+  
+  // optim: iterate to the max degree of the three polynomials
+  int64_t max_deg = poly_degree(c0_prod);
+  int64_t deg1 = poly_degree(c1_sum);
+  int64_t deg2 = poly_degree(c2_prod);
+  if (deg1 > max_deg) max_deg = deg1;
+  if (deg2 > max_deg) max_deg = deg2;
+  
+  for (int i = 0; i <= max_deg; i++) {
     if (fabs(c0_prod.coeffs[i]) > 1e-9) {
       c0_res.coeffs[i] = round(t * c0_prod.coeffs[i] / q);
     }
@@ -71,7 +79,11 @@ Ciphertext mul_cipher(Ciphertext c1, Ciphertext c2, double q, double t,
 
   Poly div_b = create_poly();
   Poly div_a = create_poly();
-  for (int i = 0; i < MAX_POLY_DEGREE; i++) {
+  int64_t max_deg_prod = poly_degree(prod_b);
+  int64_t deg_a = poly_degree(prod_a);
+  if (deg_a > max_deg_prod) max_deg_prod = deg_a;
+  
+  for (int i = 0; i <= max_deg_prod; i++) {
     double vb = prod_b.coeffs[i];
     double va = prod_a.coeffs[i];
     if (fabs(vb) > 1e-9) {
