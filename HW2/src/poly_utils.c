@@ -120,7 +120,8 @@ void poly_divmod(Poly num, Poly den, Poly *quot, Poly *rem) {
     double coeff = trunc(round(r_coeff) / round(d_lead));
     quot->coeffs[k] += coeff;
 
-    for (int i = 0; i < MAX_POLY_DEGREE; i++) {
+    // optim: only iterate to the denominator degree
+    for (int i = 0; i <= ddeg; i++) {
       if (fabs(den.coeffs[i]) > 1e-9) {
         int64_t deg = i + k;
         assert(deg < MAX_POLY_DEGREE);
@@ -136,7 +137,9 @@ Poly poly_round_div_scalar(Poly x, double divisor) {
   Poly out = create_poly();
   assert(fabs(divisor) > 1e-9);
 
-  for (int i = 0; i < MAX_POLY_DEGREE; i++) {
+  // Optim: only iterate to actual degree
+  int64_t degree = poly_degree(x);
+  for (int i = 0; i <= degree; i++) {
     double v = x.coeffs[i];
     out.coeffs[i] = round(v / divisor);
   }
