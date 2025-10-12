@@ -5,9 +5,7 @@
 
 Poly create_poly(void) {
   Poly p;
-  for (int i = 0; i < MAX_POLY_DEGREE; i++) {
-    p.coeffs[i] = 0.0;
-  }
+  memset(p.coeffs, 0, sizeof(p.coeffs)); // faster zero initialization
   return p;
 }
 
@@ -44,11 +42,13 @@ void set_coeff(Poly *p, int64_t degree, double value) {
 
 Poly coeff_mod(Poly p, double modulus) {
   Poly out = create_poly();
-  for (int i = 0; i < MAX_POLY_DEGREE; i++) {
-    if (fabs(p.coeffs[i]) > 1e-9) {
-      double rounded = round(p.coeffs[i]);
-      double m = positive_fmod(rounded, modulus);
-      out.coeffs[i] = m;
+  // optim: compute actual degree once and iterate only up to it
+  int64_t degree = poly_degree(p);
+  for (int i = 0; i <= degree; i++) {
+    double coeff = p.coeffs[i];
+    if (fabs(coeff) > 1e-9) {
+      double rounded = round(coeff);
+      out.coeffs[i] = positive_fmod(rounded, modulus);
     }
   }
   return out;
@@ -56,7 +56,11 @@ Poly coeff_mod(Poly p, double modulus) {
 
 Poly poly_add(Poly a, Poly b) {
   Poly sum = create_poly();
-  for (int i = 0; i < MAX_POLY_DEGREE; i++) {
+  int64_t max_deg = poly_degree(a);
+  int64_t b_deg = poly_degree(b);
+  if (b_deg > max_deg) max_deg = b_deg;
+  
+  for (int i = 0; i <= max_deg; i++) {
     sum.coeffs[i] = a.coeffs[i] + b.coeffs[i];
   }
   return sum;
@@ -64,7 +68,8 @@ Poly poly_add(Poly a, Poly b) {
 
 Poly poly_mul_scalar(Poly p, double scalar) {
   Poly res = create_poly();
-  for (int i = 0; i < MAX_POLY_DEGREE; i++) {
+  int64_t degree = poly_degree(p);
+  for (int i = 0; i <= degree; i++) {
     res.coeffs[i] = p.coeffs[i] * scalar;
   }
   return res;
@@ -73,12 +78,18 @@ Poly poly_mul_scalar(Poly p, double scalar) {
 Poly poly_mul(Poly a, Poly b) {
   Poly res = create_poly();
 
-  for (int i = 0; i < MAX_POLY_DEGREE; i++) {
-    if (fabs(a.coeffs[i]) > 1e-9) {
-      for (int j = 0; j < MAX_POLY_DEGREE; j++) {
-        if (fabs(b.coeffs[j]) > 1e-9) {
-          assert(i + j < MAX_POLY_DEGREE);
-          res.coeffs[i + j] += a.coeffs[i] * b.coeffs[j];
+  // Optim: compute degrees once and iterate only necessary ranges
+  int64_t a_deg = poly_degree(a);
+  int64_t b_deg = poly_degree(b);
+  
+  for (int i = 0; i <= a_deg; i++) {
+    double a_coeff = a.coeffs[i];
+    if (fabs(a_coeff) > 1e-9) {
+      int max_j = (b_deg < MAX_POLY_DEGREE - 1 - i) ? b_deg : MAX_POLY_DEGREE - 1 - i;
+      for (int j = 0; j <= max_j; j++) {
+        double b_coeff = b.coeffs[j];
+        if (fabs(b_coeff) > 1e-9) {
+          res.coeffs[i + j] += a_coeff * b_coeff;
         }
       }
     }
