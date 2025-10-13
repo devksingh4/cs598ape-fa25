@@ -97,6 +97,26 @@ Poly poly_mul(Poly a, Poly b) {
   return res;
 }
 
+// optim: reduction for cyclotomic polynomial x^n + 1 (since x^n = -1, we have x^(n+k) = -x^k)
+Poly poly_mod_optimized(Poly p, size_t n) {
+  Poly result = create_poly();
+  for (int i = 0; i < MAX_POLY_DEGREE; i++) {
+    if (fabs(p.coeffs[i]) > 1e-9) {
+      if (i < n) {
+        result.coeffs[i] = p.coeffs[i];
+      } else {
+        int wrapped_idx = i % n;
+        int num_wraps = i / n;
+        // Apply negation for odd number of wraps
+        double sign = (num_wraps % 2 == 0) ? 1 : -1;
+        result.coeffs[wrapped_idx] += sign * p.coeffs[i];
+      }
+    }
+  }
+  
+  return result;
+}
+
 void poly_divmod(Poly num, Poly den, Poly *quot, Poly *rem) {
   // In our case `den` should always be (x^n + 1)
   assert(poly_degree(den) > 0 || fabs(get_coeff(den, 0)) > 1e-9);

@@ -6,8 +6,8 @@ Poly ring_add_mod(Poly x, Poly y, double modulus, Poly poly_mod) {
 
   Poly sum_mod = coeff_mod(sum, modulus);
 
-  Poly quot, rem;
-  poly_divmod(sum_mod, poly_mod, &quot, &rem);
+  size_t n = poly_degree(poly_mod);
+  Poly rem = poly_mod_optimized(sum_mod, n);
 
   Poly rem_mod = coeff_mod(rem, modulus);
 
@@ -19,8 +19,8 @@ Poly ring_mul_mod(Poly x, Poly y, double modulus, Poly poly_mod) {
 
   Poly prod_mod = coeff_mod(prod, modulus);
 
-  Poly quot, rem;
-  poly_divmod(prod_mod, poly_mod, &quot, &rem);
+  size_t n = poly_degree(poly_mod);
+  Poly rem = poly_mod_optimized(prod_mod, n);
 
   Poly rem_mod = coeff_mod(rem, modulus);
 
@@ -30,8 +30,8 @@ Poly ring_mul_mod(Poly x, Poly y, double modulus, Poly poly_mod) {
 Poly ring_mul_no_mod_q(Poly x, Poly y, Poly poly_mod) {
   Poly prod = poly_mul(x, y);
 
-  Poly quot, rem;
-  poly_divmod(prod, poly_mod, &quot, &rem);
+  size_t n = poly_degree(poly_mod);
+  Poly rem = poly_mod_optimized(prod, n);
 
   return rem;
 }
@@ -39,22 +39,22 @@ Poly ring_mul_no_mod_q(Poly x, Poly y, Poly poly_mod) {
 Poly ring_add_no_mod_q(Poly x, Poly y, Poly poly_mod) {
   Poly sum = poly_add(x, y);
 
-  Poly quot, rem;
-  poly_divmod(sum, poly_mod, &quot, &rem);
+  size_t n = poly_degree(poly_mod);
+  Poly rem = poly_mod_optimized(sum, n);
 
   return rem;
 }
 
 Poly ring_mul_poly_mod(Poly x, Poly y, Poly poly_mod) {
   Poly prod = poly_mul(x, y);
-  Poly quot, rem;
-  poly_divmod(prod, poly_mod, &quot, &rem);
+  size_t n = poly_degree(poly_mod);
+  Poly rem = poly_mod_optimized(prod, n);
   return rem;
 }
 
 Poly ring_add_poly_mod(Poly x, Poly y, Poly poly_mod) {
   Poly sum = poly_add(x, y);
-  Poly quot, rem;
-  poly_divmod(sum, poly_mod, &quot, &rem);
+  size_t n = poly_degree(poly_mod);
+  Poly rem = poly_mod_optimized(sum, n);
   return rem;
 }
