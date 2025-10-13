@@ -1,5 +1,5 @@
-CC := gcc
-CFLAGS := -O2 -lm -g -Werror -std=c99
+CC := g++
+CFLAGS := -O3 -lm -g -Werror -ffast-math -ftree-vectorize -march=native -flto
 OBJ_DIR := ./bin/
 
 C_FILES := $(wildcard src/*.c)
