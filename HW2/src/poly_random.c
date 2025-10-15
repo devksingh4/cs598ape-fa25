@@ -16,6 +16,15 @@ Poly gen_binary_poly(size_t size) {
 
 // Box-Muller transform
 static double gen_normal(double mean, double stddev) {
+  static int has_spare = 0;
+  static double spare;
+  
+  if (has_spare) {
+    has_spare = 0;
+    return mean + spare * stddev;
+  }
+  
+  has_spare = 1;
   double u, v, s;
   do {
     u = (rand() / (double)RAND_MAX) * 2.0 - 1.0;
@@ -24,6 +33,7 @@ static double gen_normal(double mean, double stddev) {
   } while (s >= 1.0 || s == 0.0);
 
   s = sqrt(-2.0 * log(s) / s);
+  spare = v * s;
   return mean + u * s * stddev;
 }
 
