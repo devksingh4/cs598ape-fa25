@@ -1,7 +1,7 @@
 #include "ring_utils.h"
 #include "poly_utils.h"
 
-Poly ring_add_mod(Poly& x, Poly& y, double modulus, Poly poly_mod) {
+Poly ring_add_mod(Poly& x, Poly& y, double modulus, Poly& poly_mod) {
   Poly sum = poly_add(x, y);
 
   Poly sum_mod = coeff_mod(sum, modulus);
@@ -14,7 +14,7 @@ Poly ring_add_mod(Poly& x, Poly& y, double modulus, Poly poly_mod) {
   return rem_mod;
 }
 
-Poly ring_mul_mod(Poly& x, Poly& y, double modulus, Poly poly_mod) {
+Poly ring_mul_mod(Poly& x, Poly& y, double modulus, Poly& poly_mod) {
   Poly prod = poly_mul(x, y);
 
   Poly prod_mod = coeff_mod(prod, modulus);

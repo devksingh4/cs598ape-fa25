@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-double decrypt(SecretKey sk, size_t n, double q, Poly poly_mod, double t,
+double decrypt(SecretKey& sk, size_t n, double q, Poly& poly_mod, double t,
                 Ciphertext ct) {
   Poly c1s = ring_mul_mod(ct.c1, sk, q, poly_mod);
   Poly scaled_pt = ring_add_mod(c1s, ct.c0, q, poly_mod);

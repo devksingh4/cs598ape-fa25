@@ -3,7 +3,7 @@
 #include "poly_utils.h"
 #include "ring_utils.h"
 
-KeyPair keygen(size_t n, double q, Poly poly_mod) {
+KeyPair keygen(size_t n, double q, Poly& poly_mod) {
   SecretKey s = gen_binary_poly(n);
   Poly a = gen_uniform_poly(n, q);
   Poly e = gen_normal_poly(n, 0.0, 1.0);
@@ -21,7 +21,7 @@ KeyPair keygen(size_t n, double q, Poly poly_mod) {
   return keys;
 }
 
-EvalKey evaluate_keygen(SecretKey sk, size_t n, double q, Poly poly_mod,
+EvalKey evaluate_keygen(SecretKey sk, size_t n, double q, Poly& poly_mod,
                         double p) {
   double new_modulus = q * p;
   Poly a = gen_uniform_poly(n, new_modulus);
