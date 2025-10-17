@@ -60,8 +60,8 @@ int main(int argc, char **argv) {
          mode == 0 ? "ct*pt" : "ct*ct");
 
   Poly poly_mod = create_poly();
-  set_coeff(&poly_mod, 0, 1.0);
-  set_coeff(&poly_mod, n, 1.0);
+  set_coeff(poly_mod, 0, 1.0);
+  set_coeff(poly_mod, n, 1.0);
 
   KeyPair keys = keygen(n, q, poly_mod);
   PublicKey pk = keys.pk;
