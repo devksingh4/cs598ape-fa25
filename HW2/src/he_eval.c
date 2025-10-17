@@ -58,16 +58,30 @@ Ciphertext mul_cipher(Ciphertext c1, Ciphertext c2, double q, double t,
   if (deg1 > max_deg) max_deg = deg1;
   if (deg2 > max_deg) max_deg = deg2;
   
-  #pragma omp parallel for
-  for (int i = 0; i <= max_deg; i++) {
-    if (fabs(c0_prod.coeffs[i]) > 1e-9) {
-      c0_res.coeffs[i] = round(t * c0_prod.coeffs[i] / q);
+  if (max_deg > 100) {
+    #pragma omp parallel for
+    for (int i = 0; i <= max_deg; i++) {
+      if (fabs(c0_prod.coeffs[i]) > 1e-9) {
+        c0_res.coeffs[i] = round(t * c0_prod.coeffs[i] / q);
+      }
+      if (fabs(c1_sum.coeffs[i]) > 1e-9) {
+        c1_res.coeffs[i] = round(t * c1_sum.coeffs[i] / q);
+      }
+      if (fabs(c2_prod.coeffs[i]) > 1e-9) {
+        c2_res.coeffs[i] = round(t * c2_prod.coeffs[i] / q);
+      }
     }
-    if (fabs(c1_sum.coeffs[i]) > 1e-9) {
-      c1_res.coeffs[i] = round(t * c1_sum.coeffs[i] / q);
-    }
-    if (fabs(c2_prod.coeffs[i]) > 1e-9) {
-      c2_res.coeffs[i] = round(t * c2_prod.coeffs[i] / q);
+  } else {
+    for (int i = 0; i <= max_deg; i++) {
+      if (fabs(c0_prod.coeffs[i]) > 1e-9) {
+        c0_res.coeffs[i] = round(t * c0_prod.coeffs[i] / q);
+      }
+      if (fabs(c1_sum.coeffs[i]) > 1e-9) {
+        c1_res.coeffs[i] = round(t * c1_sum.coeffs[i] / q);
+      }
+      if (fabs(c2_prod.coeffs[i]) > 1e-9) {
+        c2_res.coeffs[i] = round(t * c2_prod.coeffs[i] / q);
+      }
     }
   }
 
@@ -85,16 +99,28 @@ Ciphertext mul_cipher(Ciphertext c1, Ciphertext c2, double q, double t,
   int64_t deg_a = poly_degree(prod_a);
   if (deg_a > max_deg_prod) max_deg_prod = deg_a;
   
-  
-  #pragma omp parallel for
-  for (int i = 0; i <= max_deg_prod; i++) {
-    double vb = prod_b.coeffs[i];
-    double va = prod_a.coeffs[i];
-    if (fabs(vb) > 1e-9) {
-      div_b.coeffs[i] = round(vb / p);
+  if (max_deg_prod > 100) {
+    #pragma omp parallel for
+    for (int i = 0; i <= max_deg_prod; i++) {
+      double vb = prod_b.coeffs[i];
+      double va = prod_a.coeffs[i];
+      if (fabs(vb) > 1e-9) {
+        div_b.coeffs[i] = round(vb / p);
+      }
+      if (fabs(va) > 1e-9) {
+        div_a.coeffs[i] = round(va / p);
+      }
     }
-    if (fabs(va) > 1e-9) {
-      div_a.coeffs[i] = round(va / p);
+  } else {
+    for (int i = 0; i <= max_deg_prod; i++) {
+      double vb = prod_b.coeffs[i];
+      double va = prod_a.coeffs[i];
+      if (fabs(vb) > 1e-9) {
+        div_b.coeffs[i] = round(vb / p);
+      }
+      if (fabs(va) > 1e-9) {
+        div_a.coeffs[i] = round(va / p);
+      }
     }
   }
 
