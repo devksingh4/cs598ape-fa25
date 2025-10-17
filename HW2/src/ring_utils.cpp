@@ -2,16 +2,21 @@
 #include "poly_utils.h"
 
 Poly ring_add_mod(Poly& x, Poly& y, double modulus, Poly& poly_mod) {
-  Poly sum = poly_add(x, y);
-
-  Poly sum_mod = coeff_mod(sum, modulus);
-
+  Poly sum = create_poly();
   size_t n = poly_degree(poly_mod);
-  Poly rem = poly_mod_optimized(sum_mod, n);
-
-  Poly rem_mod = coeff_mod(rem, modulus);
-
-  return rem_mod;
+  
+  for (size_t i = 0; i < n; i++) {
+    sum.coeffs[i] = x.coeffs[i] + y.coeffs[i];
+  }
+  
+  for (size_t i = 0; i < n; i++) {
+    if (fabs(sum.coeffs[i]) > 1e-9) {
+      double rounded = round(sum.coeffs[i]);
+      sum.coeffs[i] = positive_fmod(rounded, modulus);
+    }
+  }
+  
+  return sum;
 }
 
 Poly ring_mul_mod(Poly& x, Poly& y, double modulus, Poly& poly_mod) {
