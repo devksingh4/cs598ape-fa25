@@ -60,31 +60,18 @@ Poly poly_add(const Poly& a, const Poly& b) {
   int64_t b_deg = poly_degree(b);
   if (b_deg > max_deg) max_deg = b_deg;
   
-  if (max_deg > 100) {
-    #pragma omp parallel for
-    for (int i = 0; i <= max_deg; i++) {
-      sum.coeffs[i] = a.coeffs[i] + b.coeffs[i];
-    }
-  } else {
-    for (int i = 0; i <= max_deg; i++) {
-      sum.coeffs[i] = a.coeffs[i] + b.coeffs[i];
-    }
+  for (int i = 0; i <= max_deg; i++) {
+    sum.coeffs[i] = a.coeffs[i] + b.coeffs[i];
   }
+
   return sum;
 }
 
 Poly poly_mul_scalar(const Poly& p, double scalar) {
   Poly res = create_poly();
   int64_t degree = poly_degree(p);
-  if (degree > 100) {
-    #pragma omp parallel for
-    for (int i = 0; i <= degree; i++) {
-      res.coeffs[i] = p.coeffs[i] * scalar;
-    }
-  } else {
-    for (int i = 0; i <= degree; i++) {
-      res.coeffs[i] = p.coeffs[i] * scalar;
-    }
+  for (int i = 0; i <= degree; i++) {
+    res.coeffs[i] = p.coeffs[i] * scalar;
   }
   return res;
 }

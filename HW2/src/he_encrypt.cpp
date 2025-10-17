@@ -10,7 +10,7 @@ Poly encode_plain_integer(double t, double pt) {
   return m;
 }
 
-Ciphertext encrypt(PublicKey pk, size_t n, double q, Poly poly_mod, double t,
+Ciphertext encrypt(PublicKey& pk, size_t n, double q, Poly& poly_mod, double t,
                    double pt) {
   Poly m = encode_plain_integer(t, pt);
   Poly scaled_m = poly_mul_scalar(m, floor(q / t));
