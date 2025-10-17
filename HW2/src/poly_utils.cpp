@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
-#include <unordered_map>
-
-static std::unordered_map<const Poly*, int64_t> degree_cache;
 
 Poly create_poly(void) {
   Poly p;
@@ -20,18 +17,11 @@ double positive_fmod(double x, double m) {
 }
 
 int64_t poly_degree(const Poly& p) {
-  auto it = degree_cache.find(&p);
-  if (it != degree_cache.end()) {
-    return it->second;
-  }
-  
-  for (int64_t i = MAX_POLY_DEGREE - 1; i >= 0; --i) {
+  for (int64_t i = MAX_POLY_DEGREE - 1; i >= 0; i--) {
     if (fabs(p.coeffs[i]) > 1e-9) {
-      degree_cache[&p] = i;
       return i;
     }
   }
-  degree_cache[&p] = 0;
   return 0;
 }
 
