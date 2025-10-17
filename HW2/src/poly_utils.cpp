@@ -2,10 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
+#include <unordered_map>
+
+static std::unordered_map<const Poly*, int64_t> degree_cache;
 
 Poly create_poly(void) {
   Poly p;
   memset(p.coeffs, 0, sizeof(p.coeffs)); // faster zero initialization
+  p.degree = -1;
   return p;
 }
 
@@ -17,11 +21,15 @@ double positive_fmod(double x, double m) {
 }
 
 int64_t poly_degree(const Poly& p) {
-  for (int64_t i = MAX_POLY_DEGREE - 1; i >= 0; i--) {
+  if (p.degree >= 0) return p.degree;
+  
+  for (int64_t i = MAX_POLY_DEGREE - 1; i >= 0; --i) {
     if (fabs(p.coeffs[i]) > 1e-9) {
+      const_cast<Poly&>(p).degree = i;  // Cache it
       return i;
     }
   }
+  const_cast<Poly&>(p).degree = 0;
   return 0;
 }
 
@@ -33,10 +41,9 @@ double get_coeff(const Poly& p, int64_t degree) {
 }
 
 void set_coeff(Poly& p, int64_t degree, double value) {
-  if (degree >= MAX_POLY_DEGREE || degree < 0) {
-    return;
-  }
+  if (degree >= MAX_POLY_DEGREE || degree < 0) return;
   p.coeffs[degree] = value;
+  p.degree = std::max(p.degree, degree);  
 }
 
 Poly coeff_mod(const Poly& p, double modulus) {
