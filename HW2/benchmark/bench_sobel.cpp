@@ -161,8 +161,8 @@ int main(int argc, char **argv) {
   int total_pixels = img.width * img.height;
 
   Poly poly_mod = create_poly();
-  set_coeff(&poly_mod, 0, 1);
-  set_coeff(&poly_mod, n, 1);
+  set_coeff(poly_mod, 0, 1);
+  set_coeff(poly_mod, n, 1);
 
   printf("Generating keys...\n");
   KeyPair keys = keygen(n, q, poly_mod);
