@@ -5,7 +5,7 @@
 #include <math.h>
 #include <omp.h>
 
-Ciphertext add_plain(Ciphertext ct, double q, double t, Poly poly_mod,
+Ciphertext add_plain(Ciphertext ct, double q, double t, Poly& poly_mod,
                      double pt) {
   Poly m = encode_plain_integer(t, pt);
   Poly scaled_m = poly_mul_scalar(m, q / t);
