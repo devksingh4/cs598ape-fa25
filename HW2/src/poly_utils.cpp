@@ -48,9 +48,18 @@ double get_coeff(const Poly& p, int64_t degree) {
 }
 
 void set_coeff(Poly& p, int64_t degree, double value) {
-  if (degree >= MAX_POLY_DEGREE || degree < 0) return;
+  if (degree >= MAX_POLY_DEGREE || degree < 0) {
+    return;
+  }
+  const int64_t current_degree = poly_degree(p);  
   p.coeffs[degree] = value;
-  p.degree = std::max(p.degree, degree);  
+  if (fabs(value) > 1e-9) {
+    p.degree = std::max(current_degree, degree);
+  } else {
+    if (degree == current_degree) {
+      p.degree = calculate_poly_degree(p, current_degree - 1);
+    }
+  }
 }
 
 Poly coeff_mod(const Poly& p, double modulus) {
@@ -76,7 +85,7 @@ Poly poly_add(const Poly& a, const Poly& b) {
   for (int i = 0; i <= max_deg; i++) {
     sum.coeffs[i] = a.coeffs[i] + b.coeffs[i];
   }
-  sum.degree = max_deg;
+  sum.degree = calculate_poly_degree(sum, max_deg);
   return sum;
 }
 
