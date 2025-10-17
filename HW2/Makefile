@@ -1,5 +1,5 @@
 CC := g++
-CFLAGS := -std=c++20 -O3 -lm -g -Werror -ffast-math -ftree-vectorize -march=native -flto 
+CFLAGS := -std=c++20 -O3 -lm -g -Werror -ffast-math -ftree-vectorize -march=native -flto -funroll-loops
 OBJ_DIR := ./bin/
 
 C_FILES := $(wildcard src/*.cpp)
