@@ -100,7 +100,7 @@ Poly poly_mul(const Poly& a, const Poly& b) {
   for (int i = 0; i <= a_deg; i++) {
     double a_coeff = a.coeffs[i];
     if (fabs(a_coeff) > 1e-9) {
-      int max_j = (b_deg < MAX_POLY_DEGREE - 1 - i) ? b_deg : MAX_POLY_DEGREE - 1 - i;
+      const int max_j = std::min((int64_t)b_deg, (int64_t)(MAX_POLY_DEGREE - 1 - i));
       for (int j = 0; j <= max_j; j++) {
         double b_coeff = b.coeffs[j];
         if (fabs(b_coeff) > 1e-9) {
