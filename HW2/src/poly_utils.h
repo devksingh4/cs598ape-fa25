@@ -21,6 +21,12 @@ Poly poly_mul_scalar(Poly p, double scalar);
 
 Poly poly_mul(Poly a, Poly b);
 
+Poly poly_mul_parallel(Poly a, Poly b);
+
+Poly poly_mod_optimized(Poly p, size_t n);
+
+Poly poly_round_div_scalar(Poly x, double divisor);
+
 void poly_divmod(Poly numerator, Poly denominator, Poly *quotient,
                  Poly *remainder);
 

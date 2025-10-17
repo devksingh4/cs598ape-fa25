@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <omp.h>
 
 Poly create_poly(void) {
   Poly p;
@@ -44,11 +45,23 @@ Poly coeff_mod(Poly p, double modulus) {
   Poly out = create_poly();
   // optim: compute actual degree once and iterate only up to it
   int64_t degree = poly_degree(p);
-  for (int i = 0; i <= degree; i++) {
-    double coeff = p.coeffs[i];
-    if (fabs(coeff) > 1e-9) {
-      double rounded = round(coeff);
-      out.coeffs[i] = positive_fmod(rounded, modulus);
+  
+  if (degree > 100) {
+    #pragma omp parallel for
+    for (int i = 0; i <= degree; i++) {
+      double coeff = p.coeffs[i];
+      if (fabs(coeff) > 1e-9) {
+        double rounded = round(coeff);
+        out.coeffs[i] = positive_fmod(rounded, modulus);
+      }
+    }
+  } else {
+    for (int i = 0; i <= degree; i++) {
+      double coeff = p.coeffs[i];
+      if (fabs(coeff) > 1e-9) {
+        double rounded = round(coeff);
+        out.coeffs[i] = positive_fmod(rounded, modulus);
+      }
     }
   }
   return out;
@@ -60,8 +73,15 @@ Poly poly_add(Poly a, Poly b) {
   int64_t b_deg = poly_degree(b);
   if (b_deg > max_deg) max_deg = b_deg;
   
-  for (int i = 0; i <= max_deg; i++) {
-    sum.coeffs[i] = a.coeffs[i] + b.coeffs[i];
+  if (max_deg > 100) {
+    #pragma omp parallel for
+    for (int i = 0; i <= max_deg; i++) {
+      sum.coeffs[i] = a.coeffs[i] + b.coeffs[i];
+    }
+  } else {
+    for (int i = 0; i <= max_deg; i++) {
+      sum.coeffs[i] = a.coeffs[i] + b.coeffs[i];
+    }
   }
   return sum;
 }
@@ -69,8 +89,15 @@ Poly poly_add(Poly a, Poly b) {
 Poly poly_mul_scalar(Poly p, double scalar) {
   Poly res = create_poly();
   int64_t degree = poly_degree(p);
-  for (int i = 0; i <= degree; i++) {
-    res.coeffs[i] = p.coeffs[i] * scalar;
+  if (degree > 100) {
+    #pragma omp parallel for
+    for (int i = 0; i <= degree; i++) {
+      res.coeffs[i] = p.coeffs[i] * scalar;
+    }
+  } else {
+    for (int i = 0; i <= degree; i++) {
+      res.coeffs[i] = p.coeffs[i] * scalar;
+    }
   }
   return res;
 }
@@ -95,6 +122,41 @@ Poly poly_mul(Poly a, Poly b) {
     }
   }
   return res;
+}
+
+
+// optim: reduction for cyclotomic polynomial x^n + 1 (since x^n = -1, we have x^(n+k) = -x^k)
+Poly poly_mod_optimized(Poly p, size_t n) {
+  Poly result = create_poly();
+  
+  // parallelize handling coefficients < n (no race condition)
+  if (n > 100) {
+    #pragma omp parallel for
+    for (int i = 0; i < n; i++) {
+      if (fabs(p.coeffs[i]) > 1e-9) {
+        result.coeffs[i] = p.coeffs[i];
+      }
+    }
+  } else {
+    for (int i = 0; i < n; i++) {
+      if (fabs(p.coeffs[i]) > 1e-9) {
+        result.coeffs[i] = p.coeffs[i];
+      }
+    }
+  }
+  
+  // sequential handling coefficients >= n (to avoid race conditions)
+  for (int i = n; i < MAX_POLY_DEGREE; i++) {
+    if (fabs(p.coeffs[i]) > 1e-9) {
+      int wrapped_idx = i % n;
+      int num_wraps = i / n;
+      // Apply negation for odd number of wraps
+      double sign = (num_wraps % 2 == 0) ? 1 : -1;
+      result.coeffs[wrapped_idx] += sign * p.coeffs[i];
+    }
+  }
+  
+  return result;
 }
 
 void poly_divmod(Poly num, Poly den, Poly *quot, Poly *rem) {
