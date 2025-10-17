@@ -21,8 +21,9 @@ Poly poly_mul_scalar(const Poly& p, double scalar);
 
 Poly poly_mul(const Poly& a, const Poly& b);
 
-void poly_divmod(const Poly& numerator, const Poly& denominator, Poly* quotient,
-                 Poly* remainder);
+Poly poly_mod_optimized(Poly& p, size_t n);
+
+Poly poly_round_div_scalar(Poly& x, double divisor);
 
 Poly create_poly(void);
 

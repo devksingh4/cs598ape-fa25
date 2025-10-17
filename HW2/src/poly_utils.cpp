@@ -1,5 +1,4 @@
 #include "poly_utils.h"
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
@@ -98,41 +97,22 @@ Poly poly_mul(const Poly& a, const Poly& b) {
   return res;
 }
 
-void poly_divmod(const Poly& num, const Poly& den, Poly* quot, Poly* rem) {
-  size_t ndeg = poly_degree(num);
-  size_t ddeg = poly_degree(den);
-
-  *quot = create_poly();
-  *rem = num;
-
-  if (ndeg < ddeg) {
-    return;
-  }
-
-  double d_lead = get_coeff(den, ddeg);
-  double d_lead_inv = 1.0 / d_lead;
-  
-  std::vector<int> nonzero_idx;
-  nonzero_idx.reserve(ddeg + 1);
-  for (int i = 0; i <= ddeg; ++i) {
-    if (fabs(den.coeffs[i]) > 1e-9) {
-      nonzero_idx.push_back(i);
-    }
-  }
-
-  for (int64_t k = ndeg - ddeg; k >= 0; --k) {
-    int64_t target_deg = ddeg + k;
-    double r_coeff = get_coeff(*rem, target_deg);
-    
-    double coeff = trunc(round(r_coeff) * round(d_lead_inv));
-    
-    if (fabs(coeff) > 1e-9) {
-      quot->coeffs[k] += coeff;
-
-      for (int idx : nonzero_idx) {
-        int64_t deg = idx + k;
-        rem->coeffs[deg] -= coeff * den.coeffs[idx];
+// optim: reduction for cyclotomic polynomial x^n + 1 (since x^n = -1, we have x^(n+k) = -x^k)
+Poly poly_mod_optimized(Poly& p, size_t n) {
+  Poly result = create_poly();
+  for (int i = 0; i < MAX_POLY_DEGREE; i++) {
+    if (fabs(p.coeffs[i]) > 1e-9) {
+      if (i < n) {
+        result.coeffs[i] = p.coeffs[i];
+      } else {
+        int wrapped_idx = i % n;
+        int num_wraps = i / n;
+        // Apply negation for odd number of wraps
+        double sign = (num_wraps % 2 == 0) ? 1 : -1;
+        result.coeffs[wrapped_idx] += sign * p.coeffs[i];
       }
     }
   }
+  
+  return result;
 }
