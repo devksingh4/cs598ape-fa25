@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
-#include <unordered_map>
-
-static std::unordered_map<const Poly*, int64_t> degree_cache;
 
 Poly create_poly(void) {
   Poly p;
