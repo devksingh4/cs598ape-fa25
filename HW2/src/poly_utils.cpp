@@ -10,6 +10,16 @@ Poly create_poly(void) {
   return p;
 }
 
+static int64_t calculate_poly_degree(const Poly& p, const int64_t start_degree) {
+  int64_t max_check = std::min(start_degree, (int64_t)MAX_POLY_DEGREE - 1);
+  for (int64_t i = max_check; i >= 0; --i) {
+    if (fabs(p.coeffs[i]) > 1e-9) {
+      return i;
+    }
+  }
+  return 0; 
+}
+
 double positive_fmod(double x, double m) {
   double r = fmod(x, m);
   if (r < 0.0)
@@ -66,7 +76,7 @@ Poly poly_add(const Poly& a, const Poly& b) {
   for (int i = 0; i <= max_deg; i++) {
     sum.coeffs[i] = a.coeffs[i] + b.coeffs[i];
   }
-
+  sum.degree = max_deg;
   return sum;
 }
 
@@ -76,6 +86,7 @@ Poly poly_mul_scalar(const Poly& p, double scalar) {
   for (int i = 0; i <= degree; i++) {
     res.coeffs[i] = p.coeffs[i] * scalar;
   }
+  res.degree = p.degree;
   return res;
 }
 
@@ -98,11 +109,12 @@ Poly poly_mul(const Poly& a, const Poly& b) {
       }
     }
   }
+  res.degree = calculate_poly_degree(res, a_deg + b_deg);
   return res;
 }
 
 // optim: reduction for cyclotomic polynomial x^n + 1 (since x^n = -1, we have x^(n+k) = -x^k)
-Poly poly_mod_optimized(Poly& p, size_t n) {
+Poly poly_mod_optimized(const Poly& p, size_t n) {
   Poly result = create_poly();
   for (int i = 0; i < MAX_POLY_DEGREE; i++) {
     if (fabs(p.coeffs[i]) > 1e-9) {
@@ -117,6 +129,8 @@ Poly poly_mod_optimized(Poly& p, size_t n) {
       }
     }
   }
-  
+  // The result can only have non-zero coefficients up to index n-1
+  // since we're reducing modulo x^n + 1
+  result.degree = calculate_poly_degree(result, n - 1);
   return result;
 }

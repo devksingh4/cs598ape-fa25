@@ -21,7 +21,7 @@ Poly poly_mul_scalar(const Poly& p, double scalar);
 
 Poly poly_mul(const Poly& a, const Poly& b);
 
-Poly poly_mod_optimized(Poly& p, size_t n);
+Poly poly_mod_optimized(const Poly& p, size_t n);
 
 Poly poly_round_div_scalar(Poly& x, double divisor);
 
