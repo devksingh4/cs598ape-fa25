@@ -1,3 +1,29 @@
+# For Review:
+
+Here are some quick notes for reviewers to run the benchmarks and see the performance optimizations:
+
+### Quick Benchmark Run
+
+To run all benchmarks and compare against baseline outputs:
+
+```bash
+make clean
+./run_benchmarks.sh
+```
+
+This will build all benchmarks, run them with timing information, and compare the outputs against the baseline reference images.
+
+## Performance Optimizations
+
+The following commit hashes represent key performance optimizations implemented in this project:
+
+- **Poly Size to 32** - `ddec75df40b64f10ab2e9694d34d65232eebf3a6`
+- **Limit iterations by max polynomial degree** - `7eac8060d30bd1ce2a623757fbcfdfd330a407e4`
+- **Updating compiler to g++** - `07f4bb0836a75192a3d87dea02e6386906f5489c`
+- **Negacyclic Mod Reduction** - `b367bb8d99f9b7eb83e2b6e3daac53d0158d91e3`
+- **Pass by reference (switch to C++)** - `0f8da31a22a7284f43ae21699b8a3e4461eaaa51`
+- **Cache Poly degree** - `684f1779c01d8e0decd200bc2afe8f0c35aaf45c`
+
 # 598APE-HW2: Homomorphic Encryption
 
 This is a C implementation of a SHE scheme based on the [Fan-Vercauteren](https://eprint.iacr.org/2012/144) RLWE-based approach and [toy implementations in Python](https://bit-ml.github.io/blog/post/homomorphic-encryption-toy-implementation-in-python/). Your task is to build and run it, then consider performance improvements.
