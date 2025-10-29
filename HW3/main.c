@@ -72,10 +72,17 @@ void metropolisHastingsStep() {
   int i = (int)(randomDouble() * L);
   int j = (int)(randomDouble() * L);
 
-  double E_before = calculateTotalEnergy();
+  int spin = lattice[i][j];
+  
+  // Calculate local energy change from flipping this spin (same logic as in calculateTotalEnergy)
+  int up = lattice[(i - 1 + L) % L][j];
+  int down = lattice[(i + 1) % L][j];
+  int left = lattice[i][(j - 1 + L) % L];
+  int right = lattice[i][(j + 1) % L];
+  
+  // Energy change from flipping this spin (2 because we count each interaction twice)
   lattice[i][j] *= -1;
-  double E_after = calculateTotalEnergy();
-  double dE = E_after - E_before;
+  double dE = 2.0 * J * spin * (up + down + left + right);
 
   if (dE <= 0.0) {
     return;
