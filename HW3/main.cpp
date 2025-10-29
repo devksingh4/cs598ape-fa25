@@ -17,11 +17,7 @@ unsigned long long randomU64() {
 }
 
 double randomDouble() {
-  unsigned long long next = randomU64();
-  next >>= (64 - 26);
-  unsigned long long next2 = randomU64();
-  next2 >>= (64 - 26);
-  return ((next << 27) + next2) / (double)(1LL << 53);
+  return (randomU64() >> 11) * 0x1.0p-53;
 }
 
 int L;          // Lattice size (L x L)
