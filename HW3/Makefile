@@ -1,13 +1,9 @@
-FUNC := gcc
-copt := -c
+FUNC := clang++
 OBJ_DIR := ./bin/
-FLAGS := -O3 -lm -g -Werror
-
-C_FILES := $(wildcard src/*.c)
-OBJ_FILES := $(addprefix $(OBJ_DIR),$(notdir $(C_FILES:.c=.obj)))
+FLAGS := -std=c++20 -O3 -lm -g -Werror -ffast-math -ftree-vectorize -march=native -flto -funroll-loops
 
 all:
-	$(FUNC) ./main.c -o ./main.exe $(FLAGS)
+	$(FUNC) ./main.cpp -o ./main.exe $(FLAGS)
 
 clean:
 	rm -f ./*.exe
