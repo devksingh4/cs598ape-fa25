@@ -3,7 +3,7 @@
 
 ## Ablation Studies
 
-All runs below run on the course-provided VMs.
+All runs below run on the course-provided VMs. You may need to install `clang` by running `sudo apt install -y clang`.
 
 | Description | Commit Hash | Small (s) | Large (s) | Largest (s) |
 |-------------|-------------|-----------|-----------|-------------|
