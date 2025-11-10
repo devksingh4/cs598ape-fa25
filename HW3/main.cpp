@@ -11,10 +11,9 @@ float tdiff(struct timeval *start, struct timeval *end) {
 unsigned long long seed = 100;
 
 unsigned long long randomU64() {
-  seed ^= (seed << 21);
-  seed ^= (seed >> 35);
-  seed ^= (seed << 4);
-  return seed;
+  seed += 0xa0761d6478bd642full;
+  __uint128_t tmp = (__uint128_t)seed * (seed ^ 0xe7037ed1a0b428dbull);
+  return (tmp >> 64) ^ tmp;
 }
 
 double randomDouble() {
