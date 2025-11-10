@@ -30,6 +30,24 @@ double T;       // Temperature
 double J = 1.0; // Coupling constant
 int **lattice;
 
+// Precomputed exponentials for Metropolis acceptance
+// For 2D Ising, dE = 2*J*spin*neighbors, where neighbors sum can be -4,-2,0,2,4
+// So dE can be -8,-4,0,4,8 (in units of J). We only need exp for positive dE.
+double exp_table[5]; // Index by (neighbor_sum + 4)/2
+
+void initializeExpTable() {
+  // Precompute exp(-dE/T) for all possible positive energy changes
+  for (int neighbor_sum = -4; neighbor_sum <= 4; neighbor_sum += 2) {
+    double dE = 2.0 * J * neighbor_sum; // spin will be factored in later
+    int idx = (neighbor_sum + 4) / 2;
+    if (dE > 0) {
+      exp_table[idx] = exp(-dE / T);
+    } else {
+      exp_table[idx] = 1.0; // Won't be used, but initialize anyway
+    }
+  }
+}
+
 void initializeLattice() {
   lattice = (int **)malloc(sizeof(int *) * L);
   for (int i = 0; i < L; i++) {
@@ -74,23 +92,26 @@ void metropolisHastingsStep() {
 
   int spin = lattice[i][j];
   
-  // Calculate local energy change from flipping this spin (same logic as in calculateTotalEnergy)
   int up = lattice[(i - 1 + L) % L][j];
   int down = lattice[(i + 1) % L][j];
   int left = lattice[i][(j - 1 + L) % L];
   int right = lattice[i][(j + 1) % L];
   
-  // Energy change from flipping this spin (2 because we count each interaction twice)
-  lattice[i][j] *= -1;
-  double dE = 2.0 * J * spin * (up + down + left + right);
-
-  if (dE <= 0.0) {
+  int neighbor_sum = up + down + left + right;  
+  int product = spin * neighbor_sum;
+  
+  if (product <= 0) {
+    // dE <= 0, always flip
+    lattice[i][j] = -spin;
     return;
   }
 
-  double prob = exp(-dE / T);
-  if (randomDouble() >= prob) {
-    lattice[i][j] *= -1;
+  int abs_neighbor_sum = (neighbor_sum > 0) ? neighbor_sum : -neighbor_sum;
+  int idx = (abs_neighbor_sum + 4) / 2;
+  
+  double prob = exp_table[idx];
+  if (randomDouble() < prob) {
+    lattice[i][j] = -spin;
   }
 }
 
@@ -199,6 +220,8 @@ int main(int argc, const char **argv) {
   printf("Coupling constant: J = %.2f\n", J);
   printf("Number of Metropolis-Hastings steps: %d\n", steps);
   printf("=================================================\n\n");
+
+  initializeExpTable();
 
   initializeLattice();
 
